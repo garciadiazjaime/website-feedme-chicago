@@ -19,5 +19,5 @@
 	<title>Chicago Food Posts</title>
 </svelte:head>
 
-<h1>Posts by Day</h1>
+<h1>Top 10 Posts with more Interaction</h1>
 <Bars data={postsByDay} />

@@ -13,6 +13,7 @@
   const duration = 2000
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
   const barHeight = 80
+  let history = []
 
   function updateChart({data, xScale, i, color}) {
     const bars = svg.selectAll("rect").data(data)
@@ -84,7 +85,7 @@
       if (!item) {
         history.push(post)
       } else {
-        item.total = Math.round((item.total + post.total) / 2)
+        item.total = post.total
       }
     })
 
@@ -103,9 +104,8 @@
       .interpolator(d3.interpolateViridis);
     
     let i = 0
-    let history = []
     for (const posts of postsByDay){
-      title = new Date(posts[0].date).toLocaleDateString()
+      title = `Day: ${new Date(posts[0].date).toLocaleDateString()}`
       history = getHistory(history, posts)
       updateChart({xScale, data: history, i, color})	
       await waitFor(duration)
@@ -120,29 +120,30 @@
       .append("svg")
       .attr("width", width)
       .attr("height", height)
-      .attr("style", "border: 1px solid black;")
 
     playHandler()
 	})
 
   async function playHandler() {
+    history = []
     if (d3) {
+      d3.selectAll("svg > *").remove();
       await drawBars({ d3, el, postsByDay: data })
     }
   }
 </script>
 
 <style>
-	.chart :global(div) {
-		font: 16px sans-serif;
-		text-align: right;
-		padding: 12px;
-		margin: 1px;
-		color: white;
-	}
+	a {
+    padding: 12px;
+    margin: 10px 0;
+    text-decoration: none;
+    border: 1px solid #ff3e00;
+    display: inline-block;
+  }
 </style>
 
 
-<button on:click={playHandler}>Play</button>
+<a href="/" on:click={playHandler}>Replay</a>
 <h2>{title}</h2>
 <div bind:this={el} class="chart"></div>
