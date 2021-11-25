@@ -9,13 +9,14 @@
   let title = ''
 
   const width = 800
-  const height = 1800
+  const height = 800
   const duration = 2000
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
-  const barHeight = 40
+  const barHeight = 80
 
   function updateChart({data, xScale, i, color}) {
     const bars = svg.selectAll("rect").data(data)
+    const text = svg.selectAll("text").data(data)
 
     if (i === 0) {
       bars
@@ -26,6 +27,17 @@
         .attr("width", d => xScale(d.total))
         .attr("height", (d, i) => barHeight * .9)
         .attr("fill", (d)  => color(d.total))
+      
+      text
+        .enter()
+        .append("text")
+        .text((d) => `${d.username} - ${d.total}`)
+        .attr("x", (d) => xScale(d.total) - 10)
+        .attr("y", (d, i) => barHeight * i + barHeight / 2)
+        .attr("fill", "white")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16px")
+        .attr("text-anchor", "end")
     }
     else {
       bars
@@ -37,9 +49,24 @@
         .duration(duration)
         .attr("x", () => 0)
         .attr("y", (d, i) => barHeight * i)
-        .attr("width", item => xScale(item.total))
+        .attr("width", d => xScale(d.total))
         .attr("height", (d, i) => barHeight * .9)
         .attr("fill", (d)  => color(d.total))
+      
+      text
+        .enter()
+        .append("text")
+        .attr("y", (d, i) => height)
+        .merge(text)
+        .transition()
+        .duration(duration)
+        .text((d) => `${d.username} - ${d.total}`)
+        .attr("x", (d) => xScale(d.total) - 10)
+        .attr("y", (d, i) => barHeight * i + barHeight / 2)
+        .attr("fill", "white")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "16px")
+        .attr("text-anchor", "end")
     }
   }
 
@@ -57,7 +84,7 @@
       if (!item) {
         history.push(post)
       } else {
-        item.total = (item.total + post.total) / 2
+        item.total = Math.round((item.total + post.total) / 2)
       }
     })
 
