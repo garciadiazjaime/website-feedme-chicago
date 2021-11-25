@@ -13,12 +13,12 @@
   const getColor = (item, color) => color(item.total)
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
 
-  function updateChart({d3, el, posts, xScale, i, color}) {
+  function updateChart({d3, el, data, xScale, i, color}) {
     const svg = d3.select(el)
+      .selectAll("div")
+      .data(data)
     if (i === 0) {
       svg
-        .selectAll("div")
-        .data(posts)
         .enter()
         .append("div")
         .style("background", item => getColor(item, color))
@@ -26,8 +26,9 @@
         .text(getText)
     } else {
       svg
-        .selectAll("div")
-        .data(posts)
+        .enter()
+        .append("div")
+        .merge(svg)
         .transition()
         .duration(duration)
         .style("background", item => getColor(item, color))
@@ -44,6 +45,19 @@
     }, 0)
   }
 
+  function getHistory(history, posts) {
+    posts.forEach(post => {
+      const item = history.find(item => item.username === post.username)
+      if (!item) {
+        history.push(post)
+      } else {
+        item.total = (item.total + post.total) / 2
+      }
+    })
+
+    return history.sort((a, b) => b.total - a.total)
+  }
+
   async function drawBars({ d3, el, postsByDay }) {
     const width = 500
     const maxValue = getMaxValue(postsByDay, d3)
@@ -57,9 +71,11 @@
       .interpolator(d3.interpolateViridis);
     
     let i = 0
+    let history = []
     for (const posts of postsByDay){
       title = new Date(posts[0].date).toLocaleDateString()
-      updateChart({d3, el, xScale, posts, i, color})	
+      history = getHistory(history, posts)
+      updateChart({d3, el, xScale, data: history, i, color})	
       await waitFor(duration)
       i++
     }
@@ -67,6 +83,8 @@
 
   onMount(async() => {
 		d3 = await import('d3')
+
+    playHandler()
 	})
 
   async function playHandler() {
