@@ -5,35 +5,41 @@
 
   let d3
   let el;
+  let svg
   let title = ''
 
+  const width = 800
+  const height = 1800
   const duration = 2000
-  const getWidth = (item, xScale) => `${xScale(item.total)}px`
-  const getText = (item) => `${item.username} / ${item.total}`
-  const getColor = (item, color) => color(item.total)
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
+  const barHeight = 40
 
-  function updateChart({d3, el, data, xScale, i, color}) {
-    const svg = d3.select(el)
-      .selectAll("div")
-      .data(data)
+  function updateChart({data, xScale, i, color}) {
+    const bars = svg.selectAll("rect").data(data)
+
     if (i === 0) {
-      svg
+      bars
         .enter()
-        .append("div")
-        .style("background", item => getColor(item, color))
-        .style("width", item => getWidth(item, xScale))
-        .text(getText)
-    } else {
-      svg
+        .append("rect")
+        .attr("x", () => 0)
+        .attr("y", (d, i) => barHeight * i)
+        .attr("width", d => xScale(d.total))
+        .attr("height", (d, i) => barHeight * .9)
+        .attr("fill", (d)  => color(d.total))
+    }
+    else {
+      bars
         .enter()
-        .append("div")
-        .merge(svg)
+        .append("rect")
+        .attr("y", (d, i) => height)
+        .merge(bars)
         .transition()
         .duration(duration)
-        .style("background", item => getColor(item, color))
-        .style("width", item => getWidth(item, xScale))
-        .text(getText)
+        .attr("x", () => 0)
+        .attr("y", (d, i) => barHeight * i)
+        .attr("width", item => xScale(item.total))
+        .attr("height", (d, i) => barHeight * .9)
+        .attr("fill", (d)  => color(d.total))
     }
   }
 
@@ -59,7 +65,6 @@
   }
 
   async function drawBars({ d3, el, postsByDay }) {
-    const width = 500
     const maxValue = getMaxValue(postsByDay, d3)
     
     const xScale = d3.scaleLinear()
@@ -75,7 +80,7 @@
     for (const posts of postsByDay){
       title = new Date(posts[0].date).toLocaleDateString()
       history = getHistory(history, posts)
-      updateChart({d3, el, xScale, data: history, i, color})	
+      updateChart({xScale, data: history, i, color})	
       await waitFor(duration)
       i++
     }
@@ -83,6 +88,12 @@
 
   onMount(async() => {
 		d3 = await import('d3')
+
+    svg = d3.select(el)
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+      .attr("style", "border: 1px solid black;")
 
     playHandler()
 	})
@@ -108,4 +119,3 @@
 <button on:click={playHandler}>Play</button>
 <h2>{title}</h2>
 <div bind:this={el} class="chart"></div>
-<br />
