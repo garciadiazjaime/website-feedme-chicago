@@ -13,23 +13,21 @@
   const getColor = (item, color) => color(item.total)
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
 
-  function updateChart({d3, el, data, xScale, i, color}) {
+  function updateChart({d3, el, posts, xScale, i, color}) {
     const svg = d3.select(el)
     if (i === 0) {
       svg
         .selectAll("div")
-        .data(data)
+        .data(posts)
         .enter()
         .append("div")
-        .transition()
-        .duration(duration)
         .style("background", item => getColor(item, color))
         .style("width", item => getWidth(item, xScale))
         .text(getText)
     } else {
       svg
         .selectAll("div")
-        .data(data)
+        .data(posts)
         .transition()
         .duration(duration)
         .style("background", item => getColor(item, color))
@@ -40,7 +38,7 @@
 
   function getMaxValue(postsByDay, d3) {
     return postsByDay.reduce((accu, items) => {
-      const newMax = d3.max(items.posts, d => d.total)
+      const newMax = d3.max(items, d => d.total)
       
       return accu > newMax ? accu : newMax
     }, 0)
@@ -59,9 +57,9 @@
       .interpolator(d3.interpolateViridis);
     
     let i = 0
-    for (const data of postsByDay){
-      title = new Date(data.date).toLocaleDateString()
-      updateChart({d3, el, xScale, data: data.posts, i, color})	
+    for (const posts of postsByDay){
+      title = new Date(posts[0].date).toLocaleDateString()
+      updateChart({d3, el, xScale, posts, i, color})	
       await waitFor(duration)
       i++
     }
@@ -69,11 +67,9 @@
 
   onMount(async() => {
 		d3 = await import('d3')
-
-		await drawBars({ d3, el, postsByDay: data })
 	})
 
-  async function replayHandler() {
+  async function playHandler() {
     if (d3) {
       await drawBars({ d3, el, postsByDay: data })
     }
@@ -91,8 +87,7 @@
 </style>
 
 
+<button on:click={playHandler}>Play</button>
 <h2>{title}</h2>
-
 <div bind:this={el} class="chart"></div>
 <br />
-<button on:click={replayHandler}>Replay</button>
