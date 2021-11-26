@@ -15,7 +15,7 @@
   const barHeight = 80
   let history = []
 
-  function updateChart({data, xScale, i, color}) {
+  function updateChart({data, xScale, yScale, i, color}) {
     const bars = svg.selectAll("rect").data(data)
     const text = svg.selectAll("text").data(data)
 
@@ -24,7 +24,7 @@
         .enter()
         .append("rect")
         .attr("x", () => 0)
-        .attr("y", (d, i) => barHeight * i)
+        .attr("y", d => barHeight * yScale(d.username))
         .attr("width", d => xScale(d.total))
         .attr("height", (d, i) => barHeight * .9)
         .attr("fill", (d)  => color(d.total))
@@ -34,7 +34,7 @@
         .append("text")
         .text((d) => `${d.username} - ${d.total}`)
         .attr("x", (d) => xScale(d.total) - 10)
-        .attr("y", (d, i) => barHeight * i + barHeight / 2)
+        .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
         .attr("fill", "white")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16px")
@@ -44,12 +44,12 @@
       bars
         .enter()
         .append("rect")
-        .attr("y", (d, i) => height)
+        .attr("y", height * 2)
         .merge(bars)
         .transition()
         .duration(duration)
         .attr("x", () => 0)
-        .attr("y", (d, i) => barHeight * i)
+        .attr("y", d => barHeight * yScale(d.username, true))
         .attr("width", d => xScale(d.total))
         .attr("height", (d, i) => barHeight * .9)
         .attr("fill", (d)  => color(d.total))
@@ -57,13 +57,13 @@
       text
         .enter()
         .append("text")
-        .attr("y", (d, i) => height)
+        .attr("y", height * 2)
         .merge(text)
         .transition()
         .duration(duration)
         .text((d) => `${d.username} - ${d.total}`)
         .attr("x", (d) => xScale(d.total) - 10)
-        .attr("y", (d, i) => barHeight * i + barHeight / 2)
+        .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
         .attr("fill", "white")
         .attr("font-family", "sans-serif")
         .attr("font-size", "16px")
@@ -89,7 +89,14 @@
       }
     })
 
-    return history.sort((a, b) => b.total - a.total)
+    return history
+  }
+
+  function getUsernames(data) {
+    return data
+      .map(item => ({ total: item.total, username: item.username}))
+      .sort((a, b) => b.total - a.total)
+      .map(item => item.username)
   }
 
   async function drawBars({ d3, el, postsByDay }) {
@@ -107,7 +114,12 @@
     for (const posts of postsByDay){
       title = `Day: ${new Date(posts[0].date).toLocaleDateString()}`
       history = getHistory(history, posts)
-      updateChart({xScale, data: history, i, color})	
+
+      const yScale = d3.scaleBand()
+      .domain(getUsernames(history))
+      .range([0, history.length]);
+
+      updateChart({xScale, yScale, data: history, i, color})	
       await waitFor(duration)
       i++
     }
