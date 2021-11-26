@@ -10,7 +10,7 @@
 
   const width = 800
   const height = 800
-  const duration = 1000
+  const duration = 2000
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
   const barHeight = 80
 
