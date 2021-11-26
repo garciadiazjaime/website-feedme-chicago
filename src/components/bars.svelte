@@ -21,6 +21,7 @@
     bars
       .enter()
       .append("rect")
+      .on("click", (e, d) => window.open(`https://instagram.com/${d.username}/`))
       .attr("x", () => 0)
       .attr("y", d => barHeight * yScale(d.username, true))
       .attr("width", d => xScale(d.total))
@@ -30,7 +31,7 @@
     text
       .enter()
       .append("text")
-      .text((d) => `${d.username} - ${d.total}`)
+      .text((d) => `@${d.username} - ${d.total}`)
       .attr("x", (d) => xScale(d.total) - 10)
       .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
       .attr("fill", "white")
@@ -46,6 +47,7 @@
     bars
       .enter()
       .append("rect")
+      .on("click", (e, d) => window.open(`https://instagram.com/${d.username}/`))
       .attr("y", height * 2)
       .merge(bars)
       .transition()
@@ -63,7 +65,7 @@
       .merge(text)
       .transition()
       .duration(duration)
-      .text((d) => `${d.username} - ${d.total}`)
+      .text((d) => `@${d.username} - ${d.total}`)
       .attr("x", (d) => xScale(d.total) - 10)
       .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
       .attr("fill", "white")
