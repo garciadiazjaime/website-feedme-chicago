@@ -19,5 +19,6 @@
 	<title>Chicago Food Posts</title>
 </svelte:head>
 
-<h1>Top 10 Posts with more Interaction</h1>
-<Bars data={postsByDay} />
+<h1>Top 10 Accounts with more Interaction</h1>
+<div>With the hashtag #chicagofood in the last 30 days</div>
+<Bars postsByDay={postsByDay} />

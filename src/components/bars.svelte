@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte'
 
-  export let data
+  export let postsByDay
 
   let d3
   let el;
@@ -10,82 +10,75 @@
 
   const width = 800
   const height = 800
-  const duration = 2000
+  const duration = 1000
   const waitFor = async (timeout = 1000) => new Promise(resolve => setTimeout(resolve, timeout))
   const barHeight = 80
-  let history = []
 
-  function updateChart({data, xScale, yScale, i, color}) {
-    const bars = svg.selectAll("rect").data(data)
-    const text = svg.selectAll("text").data(data)
+  function initChart({dataset, xScale, yScale, color }) {
+    const bars = svg.selectAll("rect").data(dataset)
+    const text = svg.selectAll("text").data(dataset)
 
-    if (i === 0) {
-      bars
-        .enter()
-        .append("rect")
-        .attr("x", () => 0)
-        .attr("y", d => barHeight * yScale(d.username))
-        .attr("width", d => xScale(d.total))
-        .attr("height", (d, i) => barHeight * .9)
-        .attr("fill", (d)  => color(d.total))
-      
-      text
-        .enter()
-        .append("text")
-        .text((d) => `${d.username} - ${d.total}`)
-        .attr("x", (d) => xScale(d.total) - 10)
-        .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
-        .attr("fill", "white")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16px")
-        .attr("text-anchor", "end")
-    }
-    else {
-      bars
-        .enter()
-        .append("rect")
-        .attr("y", height * 2)
-        .merge(bars)
-        .transition()
-        .duration(duration)
-        .attr("x", () => 0)
-        .attr("y", d => barHeight * yScale(d.username, true))
-        .attr("width", d => xScale(d.total))
-        .attr("height", (d, i) => barHeight * .9)
-        .attr("fill", (d)  => color(d.total))
-      
-      text
-        .enter()
-        .append("text")
-        .attr("y", height * 2)
-        .merge(text)
-        .transition()
-        .duration(duration)
-        .text((d) => `${d.username} - ${d.total}`)
-        .attr("x", (d) => xScale(d.total) - 10)
-        .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
-        .attr("fill", "white")
-        .attr("font-family", "sans-serif")
-        .attr("font-size", "16px")
-        .attr("text-anchor", "end")
-    }
+    bars
+      .enter()
+      .append("rect")
+      .attr("x", () => 0)
+      .attr("y", d => barHeight * yScale(d.username, true))
+      .attr("width", d => xScale(d.total))
+      .attr("height", (d, i) => barHeight * .9)
+      .attr("fill", (d)  => color(d.total))
+    
+    text
+      .enter()
+      .append("text")
+      .text((d) => `${d.username} - ${d.total}`)
+      .attr("x", (d) => xScale(d.total) - 10)
+      .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
+      .attr("fill", "white")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "16px")
+      .attr("text-anchor", "end")
   }
 
-  function getMaxValue(postsByDay, d3) {
-    return postsByDay.reduce((accu, items) => {
-      const newMax = d3.max(items, d => d.total)
-      
-      return accu > newMax ? accu : newMax
-    }, 0)
+  function updateChart({dataset, xScale, yScale, color }) {
+    const bars = svg.selectAll("rect").data(dataset)
+    const text = svg.selectAll("text").data(dataset)
+
+    bars
+      .enter()
+      .append("rect")
+      .attr("y", height * 2)
+      .merge(bars)
+      .transition()
+      .duration(duration)
+      .attr("x", () => 0)
+      .attr("y", d => barHeight * yScale(d.username, true))
+      .attr("width", d => xScale(d.total))
+      .attr("height", (d, i) => barHeight * .9)
+      .attr("fill", (d)  => color(d.total))
+    
+    text
+      .enter()
+      .append("text")
+      .attr("y", height * 2)
+      .merge(text)
+      .transition()
+      .duration(duration)
+      .text((d) => `${d.username} - ${d.total}`)
+      .attr("x", (d) => xScale(d.total) - 10)
+      .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
+      .attr("fill", "white")
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "16px")
+      .attr("text-anchor", "end")
   }
 
   function getHistory(history, posts) {
     posts.forEach(post => {
       const item = history.find(item => item.username === post.username)
       if (!item) {
-        history.push(post)
+        history.push({...post})
       } else {
-        item.total = post.total
+        item.total += post.total
       }
     })
 
@@ -99,27 +92,32 @@
       .map(item => item.username)
   }
 
-  async function drawBars({ d3, el, postsByDay }) {
-    const maxValue = getMaxValue(postsByDay, d3)
-    
-    const xScale = d3.scaleLinear()
-      .domain([0, maxValue])
-      .range([0, width]);
-    
-    const color = d3.scaleSequential()
-      .domain([maxValue, 0])
-      .interpolator(d3.interpolateViridis);
-    
+  async function drawBars(data) {
     let i = 0
-    for (const posts of postsByDay){
-      title = `Day: ${new Date(posts[0].date).toLocaleDateString()}`
+    let history = []
+    for (const posts of data){
+      title = new Date(posts[0].date).toDateString()
       history = getHistory(history, posts)
+
+      const maxValue = d3.max(history, item => item.total)
+      const xScale = d3.scaleLinear()
+        .domain([0, maxValue])
+        .range([0, width]);
 
       const yScale = d3.scaleBand()
       .domain(getUsernames(history))
       .range([0, history.length]);
 
-      updateChart({xScale, yScale, data: history, i, color})	
+      const color = d3.scaleSequential()
+        .domain([maxValue, 0])
+        .range(['red', 'blue']);
+
+      if ( i === 0 ){
+        initChart({dataset: history, xScale, yScale, color })
+      } else {
+        updateChart({dataset: history, xScale, yScale, color })	
+      }
+
       await waitFor(duration)
       i++
     }
@@ -137,10 +135,9 @@
 	})
 
   async function playHandler() {
-    history = []
     if (d3) {
       d3.selectAll("svg > *").remove();
-      await drawBars({ d3, el, postsByDay: data })
+      await drawBars(postsByDay)
     }
   }
 </script>

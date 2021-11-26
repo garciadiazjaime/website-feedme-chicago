@@ -72,13 +72,6 @@
   }],
   [{
     "date": "2021-11-22T06:00:00.000Z",
-    "username": "tboxbarcrawls",
-    "postsCount": 1,
-    "commentsCount": 9,
-    "likeCount": 397,
-    "total": 407
-  }, {
-    "date": "2021-11-22T06:00:00.000Z",
     "username": "miufafa_official",
     "postsCount": 1,
     "commentsCount": 10,
@@ -140,15 +133,15 @@
     "commentsCount": 3,
     "likeCount": 110,
     "total": 115
+  }, {
+    "date": "2021-11-22T06:00:00.000Z",
+    "username": "taichibubbletea",
+    "postsCount": 1,
+    "commentsCount": 0,
+    "likeCount": 113,
+    "total": 114
   }],
   [{
-    "date": "2021-11-23T06:00:00.000Z",
-    "username": "tboxbarcrawls",
-    "postsCount": 1,
-    "commentsCount": 12,
-    "likeCount": 411,
-    "total": 424
-  }, {
     "date": "2021-11-23T06:00:00.000Z",
     "username": "tasteofthephilippines",
     "postsCount": 1,
@@ -211,15 +204,15 @@
     "commentsCount": 2,
     "likeCount": 89,
     "total": 92
+  }, {
+    "date": "2021-11-23T06:00:00.000Z",
+    "username": "midwestfoodiegirl",
+    "postsCount": 1,
+    "commentsCount": 26,
+    "likeCount": 63,
+    "total": 90
   }],
   [{
-    "date": "2021-11-24T06:00:00.000Z",
-    "username": "tboxbarcrawls",
-    "postsCount": 1,
-    "commentsCount": 9,
-    "likeCount": 406,
-    "total": 416
-  }, {
     "date": "2021-11-24T06:00:00.000Z",
     "username": "mapleandash",
     "postsCount": 1,
@@ -282,14 +275,42 @@
     "commentsCount": 36,
     "likeCount": 64,
     "total": 113
+  }, {
+    "date": "2021-11-24T06:00:00.000Z",
+    "username": "monamigabibistro",
+    "postsCount": 1,
+    "commentsCount": 9,
+    "likeCount": 93,
+    "total": 103
   }],
   [{
+    "date": "2021-11-25T06:00:00.000Z",
+    "username": "eatsbyarchita",
+    "postsCount": 2,
+    "commentsCount": 75,
+    "likeCount": 411,
+    "total": 488
+  }, {
+    "date": "2021-11-25T06:00:00.000Z",
+    "username": "jerryspizzapdx",
+    "postsCount": 1,
+    "commentsCount": 7,
+    "likeCount": 350,
+    "total": 358
+  }, {
     "date": "2021-11-25T06:00:00.000Z",
     "username": "janessa.lourdes",
     "postsCount": 1,
     "commentsCount": 10,
     "likeCount": 208,
     "total": 219
+  }, {
+    "date": "2021-11-25T06:00:00.000Z",
+    "username": "bears_alliance",
+    "postsCount": 1,
+    "commentsCount": 7,
+    "likeCount": 172,
+    "total": 180
   }, {
     "date": "2021-11-25T06:00:00.000Z",
     "username": "doritedonuts",
@@ -313,13 +334,6 @@
     "total": 114
   }, {
     "date": "2021-11-25T06:00:00.000Z",
-    "username": "bears_alliance",
-    "postsCount": 1,
-    "commentsCount": 6,
-    "likeCount": 94,
-    "total": 101
-  }, {
-    "date": "2021-11-25T06:00:00.000Z",
     "username": "maunaeatschicago",
     "postsCount": 1,
     "commentsCount": 9,
@@ -327,31 +341,17 @@
     "total": 95
   }, {
     "date": "2021-11-25T06:00:00.000Z",
+    "username": "hangry_chicago",
+    "postsCount": 1,
+    "commentsCount": 4,
+    "likeCount": 88,
+    "total": 93
+  }, {
+    "date": "2021-11-25T06:00:00.000Z",
     "username": "yummybitescatering",
     "postsCount": 4,
     "commentsCount": 0,
     "likeCount": 87,
     "total": 91
-  }, {
-    "date": "2021-11-25T06:00:00.000Z",
-    "username": "bombaywraps",
-    "postsCount": 1,
-    "commentsCount": 1,
-    "likeCount": 89,
-    "total": 91
-  }, {
-    "date": "2021-11-25T06:00:00.000Z",
-    "username": "beantowneater",
-    "postsCount": 1,
-    "commentsCount": 27,
-    "likeCount": 49,
-    "total": 77
-  }, {
-    "date": "2021-11-25T06:00:00.000Z",
-    "username": "theoriginalrainbowcone",
-    "postsCount": 1,
-    "commentsCount": 2,
-    "likeCount": 68,
-    "total": 71
   }]
 ]
