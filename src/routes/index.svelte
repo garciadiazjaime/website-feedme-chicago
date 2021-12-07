@@ -8,9 +8,19 @@
 	export async function preload() {
 		const response = await this.fetch('/posts-by-day.json');
 		const postsByDay = await response.json();
+		const blockUsers = [
+			'manu___mg',
+			'chicagofoodauthority'
+		]
+		const postsByDayCleaned = postsByDay
+			.map(items =>
+				items.filter(post => 
+					!blockUsers.includes(post.username)
+				)
+			)
 
 		return {
-			postsByDay
+			postsByDay: postsByDayCleaned
 		}
 	}
 </script>
