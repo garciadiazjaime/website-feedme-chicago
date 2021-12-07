@@ -22,10 +22,19 @@ async function getPostsSummary() {
 }
 
 async function getPosts() {
-  await getPostsByDay()
-  await getPostsSummary()
+  debug('getting posts ...')
+  const response = await fetch(`${apiURL}/posts`)
+  const posts = await response.json()
+
+  fs.writeFileSync('./static/posts.json', JSON.stringify(posts));
 }
 
-getPosts().then(() => {
+async function main() {
+  await getPostsByDay()
+  await getPostsSummary()
+  await getPosts()
+}
+
+main().then(() => {
   debug('end')
 })
