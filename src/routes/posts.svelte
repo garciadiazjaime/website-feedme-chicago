@@ -7,6 +7,16 @@
 	onMount(async() => {
 		
 	})
+
+  function roundNumber(num) {
+    const response = Math.round(num * 100) / 100
+
+    if (response.toString().length === 3) {
+      return `${response}0`
+    }
+
+    return response
+  }
 </script>
 <script context="module">
 	export async function preload() {
@@ -47,10 +57,13 @@
     -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
   }
+  td {
+    width: 100%;
+  }
 </style>
 
 <section class="main">
-  {#each posts.slice(0, 10) as post}
+  {#each posts.slice(0, 50) as post}
   <div class="post">
     <img src={`http://127.0.0.1:3030/post/${post.id}/image`} alt="">
     <div class="content">
@@ -70,8 +83,16 @@
         <a href={`https://www.instagram.com/explore/locations/${post.location.id}/`} target="_blank">location: {post.location.name}</a>
         {/if}
       </p>
+      <table>
+        {#each post.classification as label}
+          <tr>
+            <td>{label.className}</td>
+            <td>{roundNumber(label.probability)}%</td>
+          </tr>
+        {/each}
+      </table>
       <p>
-        {post.updatedAt}
+        {new Date(post.updatedAt).toDateString()}
       </p>
     </div>
   </div>
