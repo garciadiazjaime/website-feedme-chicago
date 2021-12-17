@@ -63,7 +63,7 @@
 
     const xAxis = d3.axisBottom()
       .scale(xScale)
-      .tickFormat(d3.timeFormat("%a %m.%d"));
+      .tickFormat(d3.timeFormat("%m.%d"));
     
     const yAxis = d3.axisLeft()
       .scale(yScale)

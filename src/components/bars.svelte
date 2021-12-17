@@ -23,17 +23,17 @@
       .append("rect")
       .attr("x", () => 0)
       .attr("y", d => barHeight * yScale(d.username, true))
-      .attr("width", d => xScale(d.total))
+      .attr("width", d => xScale(d.likes))
       .attr("height", (d, i) => barHeight * .9)
-      .attr("fill", (d)  => color(d.total))
+      .attr("fill", (d)  => color(d.likes))
     
     text
       .enter()
       .append("text")
       .on("click", (e, d) => window.open(`https://instagram.com/${d.username}/`))
       .on("mouseover", (event) => d3.select(event.target).style("cursor", "pointer"))
-      .text((d) => `@${d.username} - ${d.total}`)
-      .attr("x", (d) => xScale(d.total) - 10)
+      .text((d) => `@${d.username} 🤍 ${d.likes} 📷 ${d.posts}`)
+      .attr("x", (d) => xScale(d.likes) - 10)
       .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
       .attr("fill", "white")
       .attr("font-family", "sans-serif")
@@ -54,9 +54,9 @@
       .duration(duration)
       .attr("x", () => 0)
       .attr("y", d => barHeight * yScale(d.username, true))
-      .attr("width", d => xScale(d.total))
+      .attr("width", d => xScale(d.likes))
       .attr("height", (d, i) => barHeight * .9)
-      .attr("fill", (d)  => color(d.total))
+      .attr("fill", (d)  => color(d.likes))
     
     text
       .enter()
@@ -67,8 +67,8 @@
       .merge(text)
       .transition()
       .duration(duration)
-      .text((d) => `@${d.username} - ${d.total}`)
-      .attr("x", (d) => xScale(d.total) - 10)
+      .text((d) => `@${d.username} 🤍 ${d.likes} 📷 ${d.posts}`)
+      .attr("x", (d) => xScale(d.likes) - 10)
       .attr("y", (d, i) => barHeight * yScale(d.username) + barHeight / 2)
       .attr("fill", "white")
       .attr("font-family", "sans-serif")
@@ -80,9 +80,14 @@
     posts.forEach(post => {
       const item = history.find(item => item.username === post.username)
       if (!item) {
-        history.push({...post})
+        history.push({
+          username: post.username,
+          likes: post.likeCount,
+          posts: post.postsCount,
+        })
       } else {
-        item.total += post.total
+        item.likes += post.likeCount
+        item.posts += post.postsCount
       }
     })
 
@@ -91,8 +96,8 @@
 
   function getUsernames(data) {
     return data
-      .map(item => ({ total: item.total, username: item.username}))
-      .sort((a, b) => b.total - a.total)
+      .map(item => ({ likes: item.likes, username: item.username}))
+      .sort((a, b) => b.likes - a.likes)
       .map(item => item.username)
   }
 
@@ -103,7 +108,7 @@
       title = new Date(posts[0].date).toDateString()
       history = getHistory(history, posts)
 
-      const maxValue = d3.max(history, item => item.total)
+      const maxValue = d3.max(history, item => item.likes)
       const xScale = d3.scaleLinear()
         .domain([0, maxValue])
         .range([0, width]);

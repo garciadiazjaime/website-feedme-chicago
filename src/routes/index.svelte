@@ -10,7 +10,11 @@
 		const postsByDay = await response.json();
 		const blockUsers = [
 			'manu___mg',
-			'chicagofoodauthority'
+			'tboxbarcrawls',
+			'jana_berlin.food',
+			'wilmasfoodandnature',
+			'nataliesfoodgallery',
+			'chicagofoodauthority',
 		]
 		const postsByDayCleaned = postsByDay
 			.map(items =>
