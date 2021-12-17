@@ -28,7 +28,7 @@
 </script>
 
 <svelte:head>
-	<title>Chicago Food Posts</title>
+	<title>Chicago Food Posts | stats</title>
 </svelte:head>
 
 <h1>Posts by day</h1>
