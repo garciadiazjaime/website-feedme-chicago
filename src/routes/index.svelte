@@ -1,5 +1,5 @@
 <script>
-	import Bars from '../components/Bars.svelte'
+	import Bars from '../components/BarsAnimated.svelte'
 
 	export let postsByDay;
 </script>
