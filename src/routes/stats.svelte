@@ -36,4 +36,4 @@
 <svelte:component this={Bars} data={summary} />
 
 <h2>Histogram</h2>
-<svelte:component this={Histogram} data={summary} />
+<svelte:component this={Histogram} data={summary} x={d => d.count} />

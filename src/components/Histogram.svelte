@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
 
   export let data
+  export let x
 
   let el
   onMount(async({
@@ -10,7 +11,6 @@
     label, // convenience alias for xLabel
     format, // convenience alias for xFormat
     type, // convenience alias for xType
-    x = value, // given d in data, returns the (quantitative) x-value
     y = () => 1, // given d in data, returns the (quantitative) weight
     thresholds = 40, // approximate number of bins to generate, or threshold function
     marginTop = 20, // top margin, in pixels
@@ -35,7 +35,6 @@
     svg,
   } = {}) => {
     // Compute values.
-    x = d => d.count
     xType = d3.scaleLinear
     yType = d3.scaleLinear
 
