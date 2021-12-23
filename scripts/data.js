@@ -37,11 +37,20 @@ async function getPostsClassification() {
   fs.writeFileSync('./static/classification.json', JSON.stringify(classification));
 }
 
+async function getPostsTopics() {
+  debug('getting posts topics ...')
+  const response = await fetch(`${apiURL}/posts/topics`)
+  const topics = await response.json()
+
+  fs.writeFileSync('./static/topics.json', JSON.stringify(topics));
+}
+
 async function main() {
   await getPostsByDay()
   await getPostsSummary()
   await getPosts()
   await getPostsClassification()
+  await getPostsTopics()
 }
 
 main().then(() => {
