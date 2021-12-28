@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
 
   export let data
+  export let fontScale = 2
 
   let el
   onMount(async({
@@ -12,10 +13,9 @@
   marginBottom = 0, // bottom margin, in pixels
   marginLeft = 0, // left margin, in pixels
   width = 1200, // outer width, in pixels
-  height = 600, // outer height, in pixels
+  height = 800, // outer height, in pixels
   maxWords = 250, // maximum number of words to extract from the text
   fontFamily = "sans-serif", // font family
-  fontScale = 11, // base font size
   padding = 0, // amount of padding between the words (in pixels)
   rotate = 0, // a constant or function to rotate the words
   invalidation // when this promise resolves, stop the simulation
@@ -40,7 +40,7 @@
 
     const cloud = d3Cloud()
         .size([width - marginLeft - marginRight, height - marginTop - marginBottom])
-        .words(data)
+        .words(data.slice(0, maxWords))
         .padding(padding)
         .rotate(rotate)
         .font(fontFamily)

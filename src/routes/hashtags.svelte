@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte'
 
-	export let topics;
+	export let hashtags;
 	let Bars
   let Histogram
 	let WordCloud
@@ -21,32 +21,36 @@
 	})
 
 	function getWordCloudData() {
-		return topics.map(item => ({text: item.className.split(',')[0].replace(' ', '-').toLowerCase(), size: item.total}))
+		return hashtags.map(item => ({text: item.hashtag.replace('#', '').toLowerCase(), size: item.total}))
 	}
 </script>
 
 <script context="module">
 	export async function preload() {
-		const response = await this.fetch('/topics.json');
-		const topics = await response.json();
+		const response = await this.fetch('/hashtags.json');
+		const hashtags = await response.json();
 
 		return {
-			topics
+			hashtags
 		}
 	}
 </script>
 
 <svelte:head>
-	<title>Chicago Food Posts | Topics</title>
+	<title>Chicago Food Posts | Hashtags</title>
 </svelte:head>
 
 <h2>World Cloud</h2>
-<svelte:component this={WordCloud} data={getWordCloudData()} fontScale={6} />
+<svelte:component this={WordCloud} data={getWordCloudData()} />
 
 <h2>Histogram</h2>
-<svelte:component this={Histogram} data={topics} x={d => d.total} />
+<svelte:component this={Histogram} data={hashtags} x={d => d.total} />
 
-<h1>Posts Topics</h1>
-<svelte:component this={Bars} data={topics} />
+<h1>Posts Hashtags</h1>
+<svelte:component 
+	this={Bars} 
+	data={hashtags} 
+	value={d => d.hashtag} 
+	onclick={(d) => window.open(`https://www.instagram.com/explore/tags/${d.hashtag.replace('#', '')}/`)} />
 
 

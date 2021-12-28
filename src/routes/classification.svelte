@@ -41,7 +41,7 @@
 </svelte:head>
 
 <h2>World Cloud</h2>
-<svelte:component this={WordCloud} data={getWordCloudData()} />
+<svelte:component this={WordCloud} data={getWordCloudData()} fontScale={6} />
 
 <h2>Histogram</h2>
 <svelte:component this={Histogram} data={classification} x={d => d.total} />

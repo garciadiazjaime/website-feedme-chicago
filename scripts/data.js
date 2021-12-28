@@ -45,12 +45,21 @@ async function getPostsTopics() {
   fs.writeFileSync('./static/topics.json', JSON.stringify(topics));
 }
 
+async function getPostsHashtag() {
+  debug('getting posts hashtags ...')
+  const response = await fetch(`${apiURL}/posts/hashtags`)
+  const hashtags = await response.json()
+
+  fs.writeFileSync('./static/hashtags.json', JSON.stringify(hashtags));
+}
+
 async function main() {
   await getPostsByDay()
   await getPostsSummary()
   await getPosts()
   await getPostsClassification()
   await getPostsTopics()
+  await getPostsHashtag()
 }
 
 main().then(() => {

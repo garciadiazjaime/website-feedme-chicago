@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte'
 
   export let data = []
+  export let value = d => d.className
+  export let onclick = () => {}
 
   let el
   let svg
@@ -26,7 +28,7 @@
       .enter()
       .append("rect")
       .attr("x", 1)
-      .attr("y", (d) => yScale(d.className))
+      .attr("y", (d) => yScale(value(d)))
       .attr("width", d => width - xScale(d.total))
       .attr("height", barHeight * .9)
       .attr("fill", (d)  => color(d.total))
@@ -34,9 +36,10 @@
     bars
       .enter()
       .append("text")
-      .text(d => `${d.total}: ${d.className}`)
+      .on("click", (e, d) => onclick(d))
+      .text((d, i) => `${i+1}. ${d.total}: ${value(d)}`)
       .attr("x", 5)
-      .attr("y", (d) => yScale(d.className) + yScale.bandwidth() / 2)
+      .attr("y", (d) => yScale(value(d)) + yScale.bandwidth() / 2)
       .attr("fill", "black")
       .attr("font-family", "sans-serif")
       .attr("font-size", "16px")
@@ -51,7 +54,7 @@
       .range([width, 0]);
     
     const yScale = d3.scaleBand()
-      .domain(data.map(d => d.className))
+      .domain(data.map(d => value(d)))
       .rangeRound([0, data.length * barHeight])
 
     const color = (value) => d3.interpolateBlues( value / maxValue )
