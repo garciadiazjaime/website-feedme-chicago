@@ -53,6 +53,14 @@ async function getPostsHashtag() {
   fs.writeFileSync('./static/hashtags.json', JSON.stringify(hashtags));
 }
 
+async function getPostsUsers() {
+  debug('getting posts users ...')
+  const response = await fetch(`${apiURL}/posts/users`)
+  const users = await response.json()
+
+  fs.writeFileSync('./static/users.json', JSON.stringify(users));
+}
+
 async function main() {
   await getPostsByDay()
   await getPostsSummary()
@@ -60,6 +68,7 @@ async function main() {
   await getPostsClassification()
   await getPostsTopics()
   await getPostsHashtag()
+  await getPostsUsers()
 }
 
 main().then(() => {
