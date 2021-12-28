@@ -56,5 +56,6 @@
 		<li><a aria-current="{segment === 'topics' ? 'page' : undefined}" href="topics">topics</a></li>
 		<li><a aria-current="{segment === 'hashtags' ? 'page' : undefined}" href="hashtags">hashtags</a></li>
 		<li><a aria-current="{segment === 'users' ? 'page' : undefined}" href="users">users</a></li>
+		<li><a aria-current="{segment === 'likes' ? 'page' : undefined}" href="likes">likes</a></li>
 	</ul>
 </nav>

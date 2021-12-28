@@ -61,6 +61,14 @@ async function getPostsUsers() {
   fs.writeFileSync('./static/users.json', JSON.stringify(users));
 }
 
+async function getUsersLikes() {
+  debug('getting users likes ...')
+  const response = await fetch(`${apiURL}/posts/likes`)
+  const likes = await response.json()
+
+  fs.writeFileSync('./static/likes.json', JSON.stringify(likes));
+}
+
 async function main() {
   await getPostsByDay()
   await getPostsSummary()
@@ -69,6 +77,7 @@ async function main() {
   await getPostsTopics()
   await getPostsHashtag()
   await getPostsUsers()
+  await getUsersLikes()
 }
 
 main().then(() => {
