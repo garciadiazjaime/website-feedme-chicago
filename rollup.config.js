@@ -27,7 +27,8 @@ export default {
 				preventAssignment: true,
 				values:{
 					'process.browser': true,
-					'process.env.NODE_ENV': JSON.stringify(mode)
+					'process.env.NODE_ENV': JSON.stringify(mode),
+					'process.env.API_URL': JSON.stringify(process.env.API_URL)
 				},
 			}),
 			svelte({
@@ -80,7 +81,8 @@ export default {
 				preventAssignment: true,
 				values:{
 					'process.browser': false,
-					'process.env.NODE_ENV': JSON.stringify(mode)
+					'process.env.NODE_ENV': JSON.stringify(mode),
+					'process.env.API_URL': JSON.stringify(process.env.API_URL)
 				},
 			}),
 			svelte({
@@ -115,7 +117,8 @@ export default {
 				preventAssignment: true,
 				values:{
 					'process.browser': true,
-					'process.env.NODE_ENV': JSON.stringify(mode)
+					'process.env.NODE_ENV': JSON.stringify(mode),
+					'process.env.API_URL': JSON.stringify(process.env.API_URL)
 				},
 			}),
 			commonjs(),
