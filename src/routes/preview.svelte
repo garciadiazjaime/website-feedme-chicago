@@ -3,6 +3,7 @@
 
 	let preview = {};
 	let quotes = {}
+	let msgs = {}
 	const API_URL = process.env.API_URL
 	
 	async function getPreview() {
@@ -10,19 +11,46 @@
     return await response.json()
 	}
 
-	async function getQuote(classification, i) {
+	async function getQuote(post, i) {
 		quotes[i] = '...'
 
-		const query = classification[0].className.split(',')[0]
-		console.log({query})
+		const query = post.classification[0].className.split(',')[0]
+
 		const response = await fetch(`${API_URL}/quote?query=${encodeURIComponent(query)}`)
 
 		const data = await response.json()
 		if (data.text){
-			quotes[i] = `${data.text} -${data.author}`
+			quotes[i] = `${data.text} -${data.author}- | 📷 @${post.user.username}`
 		} else {
 			quotes[i] = 'no quote :('
 		}
+	}
+
+	async function schedule(post, i) {
+		msgs[i] = 'scheduling...'
+		if (!quotes[i]) {
+			msgs[i] = 'quote empty'
+			return null
+		}
+
+		const data = {
+			id: post.id,
+			username: post.user.username,
+			caption: quotes[i],
+			imageURL: post.imageUrl,
+		}
+
+		const response = await fetch(`${API_URL}/posts/schedule`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
+		})
+
+		const result = await response.json()
+		console.log(result)
+		msgs[i] = 'scheduled'
 	}
 
 	onMount(async() => {
@@ -54,6 +82,7 @@
 			<th>topics</th>
 			<th>location</th>
 			<th>quote</th>
+			<th>schedule</th>
 		</tr>
 		{#each preview.posts as post, i}
 			<tr>
@@ -93,10 +122,15 @@
 					{/if}
 				</td>
 				<td>
-					<button on:click={() => getQuote(post.classification, i)}>Get Quote</button>
+					<button on:click={() => getQuote(post, i)}>Get Quote</button>
 					<br />
 					{quotes[i] || ''}
 				</td>
+				<th>
+					<button on:click={() => schedule(post, i)}>Schedule</button>
+					<br />
+					{msgs[i] || ''}
+				</th>
 			</tr>
 		{/each}
 	</table>
