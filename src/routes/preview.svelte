@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte'
 
-	let preview = {};
+	let preview = {}
 	let quotes = {}
 	let msgs = {}
 	const API_URL = process.env.API_URL
@@ -11,33 +11,39 @@
     return await response.json()
 	}
 
-	async function getQuote(post, i) {
-		quotes[i] = '...'
+	function getQuery(value) {
+		return value.split(',')[0].toLowerCase().replace(/\s/g,'+')
+	}
 
-		const query = post.classification[0].className.split(',')[0]
-
+	async function getQuote(post, classification) {
+		const { _id: key } = classification
+		quotes[key] = '...'
+		
+		const query = getQuery(classification.className)
 		const response = await fetch(`${API_URL}/quote?query=${encodeURIComponent(query)}`)
-
 		const data = await response.json()
+
 		if (data.text){
-			quotes[i] = `${data.text} -${data.author}- | 📷 @${post.user.username}`
+			quotes[key] = `${data.text} -${data.author}- | 📷 @${post.user.username}`
 		} else {
-			quotes[i] = 'no quote :('
+			quotes[key] = 'no quote :('
 		}
 	}
 
-	async function schedule(post, i) {
-		msgs[i] = 'scheduling...'
-		if (!quotes[i]) {
-			msgs[i] = 'quote empty'
+	async function schedule(post, classification) {
+		const { _id: key } = classification
+
+		msgs[key] = 'scheduling...'
+		if (!quotes[key]) {
+			msgs[key] = 'quote empty'
 			return null
 		}
 
 		const data = {
 			id: post.id,
 			username: post.user.username,
-			caption: quotes[i],
 			imageURL: post.imageUrl,
+			caption: quotes[key],
 		}
 
 		const response = await fetch(`${API_URL}/posts/schedule`, {
@@ -48,9 +54,8 @@
 			body: JSON.stringify(data)
 		})
 
-		const result = await response.json()
-		console.log(result)
-		msgs[i] = 'scheduled'
+		await response.json()
+		msgs[key] = 'scheduled'
 	}
 
 	onMount(async() => {
@@ -60,8 +65,14 @@
 
 <style>
 	img {
-		width: 400px;
+		width: 300px;
 		height: auto;
+	}
+	table table {
+		border-collapse: collapse;
+	}
+	table table, table table td {
+		border: 1px solid black;
 	}
 </style>
 
@@ -76,11 +87,11 @@
 		<tr>
 			<th></th>
 			<th>caption</th>
-			<th>likeCount</th>
-			<th>commentsCount</th>
+			<th>likes</th>
+			<th>comments</th>
+			<th>location</th>
 			<th>classification</th>
 			<th>topics</th>
-			<th>location</th>
 			<th>quote</th>
 			<th>schedule</th>
 		</tr>
@@ -101,20 +112,6 @@
 					{post.commentsCount}
 				</td>
 				<td>
-					{#if post.classification}
-						{#each post.classification as classification}
-							<span>{classification.className}</span> <br />
-						{/each}
-					{/if}
-				</td>
-				<td>
-					{#if post.topics}
-						{#each post.topics as topic}
-							<span>{topic.className}</span> <br />
-						{/each}
-					{/if}
-				</td>
-				<td>
 					{#if post.location}
 						<a href={`https://www.instagram.com/explore/locations/${post.location.id}/`} target="_blank">
 							{post.location.name}
@@ -122,15 +119,59 @@
 					{/if}
 				</td>
 				<td>
-					<button on:click={() => getQuote(post, i)}>Get Quote</button>
-					<br />
-					{quotes[i] || ''}
+					{#if post.classification}
+						<table>
+							{#each post.classification as classification}
+								<tr>
+									<td>
+										{classification.className}
+									</td>
+									<td>
+										{Math.round(classification.probability * 100, 2)}%
+									</td>
+									<td>
+										<button on:click={() => getQuote(post, classification)}>Get Quote</button>
+									</td>
+									<td>
+										{quotes[classification._id] || ''}
+									</td>
+									<td>
+										<button on:click={() => schedule(post, classification)}>Schedule</button>
+										<br />
+										{msgs[classification._id] || ''}
+									</td>
+								</tr>
+							{/each}
+						</table>
+					{/if}
 				</td>
-				<th>
-					<button on:click={() => schedule(post, i)}>Schedule</button>
-					<br />
-					{msgs[i] || ''}
-				</th>
+				<td>
+					{#if post.topics}
+						<table>
+							{#each post.topics as topic}
+								<tr>
+									<td>
+										{topic.className}
+									</td>
+									<td>
+										{Math.round(topic.probability, 2)}%
+									</td>
+									<td>
+										<button on:click={() => getQuote(post, topic)}>Get Quote</button>
+									</td>
+									<td>
+										{quotes[topic._id] || ''}
+									</td>
+									<td>
+										<button on:click={() => schedule(post, topic)}>Schedule</button>
+										<br />
+										{msgs[topic._id] || ''}
+									</td>
+								</tr>
+							{/each}
+						</table>
+					{/if}
+				</td>
 			</tr>
 		{/each}
 	</table>
